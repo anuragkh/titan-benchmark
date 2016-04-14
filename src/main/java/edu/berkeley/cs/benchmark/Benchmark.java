@@ -27,9 +27,9 @@ public abstract class Benchmark<T> {
     static {
         char[] chars = new char[16];
         Arrays.fill(chars, '?');
-        NODE_ATTRS = new ArrayList<>(40);
+        NODE_ATTRS = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
-            NODE_ATTRS.set(i, new String(chars));
+            NODE_ATTRS.add(i, new String(chars));
         }
     }
 
