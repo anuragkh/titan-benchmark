@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 #### Initial setup
 
+sbin="`dirname "$0"`"
+sbin="`cd "$sbin"; pwd`"
+
 dataset=twitter
-sbin=/home/ubuntu/titan-benchmark/sbin
-host_file=nsdi-10cass.hosts
-HOSTLIST=`cat ${sbin}/../conf/${host_file}`
-query_dir=${sbin}/../../twitter2010-40attr16each-queries-with-supernodes
+HOSTLIST=`cat ${sbin}/../conf/hosts`
+query_dir=~/queries
 results=~/results
 
 OUTPUT_DIR=output
@@ -35,8 +36,8 @@ tests=(
 
 #### Copy the repo files over
 for host in `echo "$HOSTLIST"|sed  "s/#.*$//;/^$/d"`; do
-  rsync -arL ${sbin}/../ ${host}:titan-benchmark &
-  rsync -arL ${sbin}/../../twitter2010-40attr16each-queries-with-supernodes ${host}:~ &
+  #rsync -arL ${sbin}/../ ubuntu@${host}:titan-benchmark &
+  rsync -arL ${sbin}/vol0/titan/queries ubuntu@${host}:~ &
 done
 wait
 echo "Synced benchmark repo and queries to all servers."
