@@ -18,7 +18,7 @@ if [ "$TITAN_SSH_OPTS" = "" ]; then
 fi
 
 for host in `echo "$HOSTLIST"|sed  "s/#.*$//;/^$/d"`; do
-  ssh $TITAN_SSH_OPTS "ubuntu@$host" $"${@// /\\ }" \
+  ssh $TITAN_SSH_OPTS "$host" $"${@// /\\ }" \
     2>&1 | sed "s/^/$host: /" &
 done
 

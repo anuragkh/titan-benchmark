@@ -24,7 +24,7 @@ tests=(
   # EdgeAttr
   # NeighborAtype
   # NodeNode
-  MixPrimitive
+  # MixPrimitive
   # TAO queries
   # AssocRange
   # ObjGet
@@ -33,14 +33,6 @@ tests=(
   # AssocTimeRange
   MixTao
 )
-
-#### Copy the repo files over
-for host in `echo "$HOSTLIST"|sed  "s/#.*$//;/^$/d"`; do
-  #rsync -arL ${sbin}/../ ubuntu@${host}:titan-benchmark &
-  rsync -arL ${sbin}/vol0/titan/queries ubuntu@${host}:~ &
-done
-wait
-echo "Synced benchmark repo and queries to all servers."
 
 bash ${sbin}/hosts.sh \
   source ${sbin}/prepare.sh ${OUTPUT_DIR}
