@@ -17,6 +17,15 @@ warmup=$((3*60))
 measure=$((5*60))
 cooldown=$((10*60))
 
+if [ "$dataset" = "twitter" ]; then
+    NUM_NODES="41652230"
+elif [ "$dataset" = "uk" ]; then
+    NUM_NODES="105896555"
+else
+    echo "Unknown dataset $dataset"
+    exit
+fi
+
 numClients=(16 64)
 tests=(
   # Primitive queries
@@ -35,6 +44,8 @@ tests=(
   MixTao
   # MixTaoWithUpdates
 )
+
+bash ${sbin}/sync.sh ${sbin}/../
 
 bash ${sbin}/hosts.sh \
   source ${sbin}/prepare.sh ${OUTPUT_DIR} ${query_dir}
@@ -55,7 +66,7 @@ for clients in ${numClients[*]}; do
       launcherStart=$(date +"%s")
       bash ${sbin}/hosts.sh \
         mvn -f titan-benchmark/pom.xml exec:java -Dexec.mainClass="edu.berkeley.cs.benchmark.Benchmark" \
-          -Dexec.args="${test} throughput ${dataset} ${query_dir} ${OUTPUT_DIR} ${clients} ${warmup} ${measure} ${cooldown}"
+          -Dexec.args="${test} throughput ${dataset} ${query_dir} ${OUTPUT_DIR} ${clients} ${warmup} ${measure} ${cooldown} ${NUM_NODES}"
       launcherEnd=$(date +"%s")
 
       bash ${sbin}/hosts.sh \
