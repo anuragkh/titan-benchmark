@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-sudo sh -c 'service cassandra stop'
-sleep 10
+#sudo sh -c 'service cassandra restart'
+#sleep 20 # Wait for all connections to establish
 sync && sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-sudo sh -c 'service cassandra start'
-sleep 20
-nodetool enablethrift
 nodetool invalidaterowcache
 nodetool invalidatekeycache
 nodetool invalidatecountercache
+nodetool enablethrift
 sleep 10
+nodetool statusthrift

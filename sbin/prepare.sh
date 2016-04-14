@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 mkdir -p $1
 export MAVEN_OPTS="-server -Xmx50000M"

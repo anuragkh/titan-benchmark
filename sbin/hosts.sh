@@ -10,8 +10,7 @@ if [ $# -le 0 ]; then
 fi
 
 sbin="`dirname "$0"`"
-host_file=nsdi-10cass.hosts
-HOSTLIST=`cat ${sbin}/../conf/${host_file}`
+HOSTLIST=`cat ${sbin}/../conf/hosts`
 
 # By default disable strict host key checking
 if [ "$TITAN_SSH_OPTS" = "" ]; then

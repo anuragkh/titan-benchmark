@@ -1,31 +1,30 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 #### Initial setup
 
+sbin="`dirname "$0"`"
+sbin="`cd "$sbin"; pwd`"
+
 dataset=twitter
-sbin=/home/ubuntu/titan-benchmark/sbin
-host_file=nsdi-10cass.hosts
-query_name=no_supernode_queries
-
-HOSTLIST=`cat ${sbin}/../conf/${host_file}`
-query_dir=${sbin}/../../${query_name}
-
+HOSTLIST=`cat ${sbin}/../conf/hosts`
+query_dir=~/queries
 results=~/results
+mkdir -p $results
 OUTPUT_DIR=output
 
-warmup=$((5*60))
-measure=$((15*60))
+warmup=$((3*60))
+measure=$((5*60))
 cooldown=$((10*60))
 
-numClients=(16)
+numClients=(16 64)
 tests=(
   # Primitive queries
-  # Neighbor
-  # NeighborNode
-  # EdgeAttr
-  # NeighborAtype
-  # NodeNode
+  Neighbor
+  NeighborNode
+  EdgeAttr
+  NeighborAtype
+  NodeNode
   MixPrimitive
   # TAO queries
   # AssocRange
@@ -34,24 +33,15 @@ tests=(
   # AssocCount
   # AssocTimeRange
   MixTao
+  # MixTaoWithUpdates
 )
 
-#### Copy the repo files over
-for host in `echo "$HOSTLIST"|sed  "s/#.*$//;/^$/d"`; do
-  rsync -arL ${sbin}/../ ${host}:titan-benchmark &
-  rsync -arL ${query_dir} ${host}:~ &
-done
-wait
-echo "Synced benchmark repo and queries to all servers."
-
-mkdir -p ${results}
 bash ${sbin}/hosts.sh \
   source ${sbin}/prepare.sh ${OUTPUT_DIR} ${query_dir}
 
 function restart_all() {
   bash ${sbin}/hosts.sh \
     bash ${sbin}/restart_cassandra.sh
-  sleep 60
 }
 
 function timestamp() {
@@ -70,7 +60,7 @@ for clients in ${numClients[*]}; do
 
       bash ${sbin}/hosts.sh \
         tail -n1 ${OUTPUT_DIR}/${test}_throughput.csv | cut -d'	' -f2 >> ${results}/thput
-      sum=$(awk '{ sum += $1} END {print sum}' ~/results/thput)
+      sum=$(awk '{ sum += $1} END {print sum}' ${results}/thput)
       cat ${results}/thput
 
       f="${results}/${test}-${clients}clients.txt"
@@ -86,4 +76,3 @@ for clients in ${numClients[*]}; do
       rm ${results}/thput
     done
 done
-
