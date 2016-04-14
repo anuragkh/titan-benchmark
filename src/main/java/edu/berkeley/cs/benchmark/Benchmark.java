@@ -16,6 +16,23 @@ public abstract class Benchmark<T> {
     public static long MEASURE_TIME = (long) (120 * 1e9);
     public static long COOLDOWN_TIME = (long) (30 * 1e9);
 
+    public static long NUM_NODES = 10000;
+    public static String EDGE_ATTR;
+    static {
+        char[] chars = new char[128];
+        Arrays.fill(chars, '|');
+        EDGE_ATTR = new String(chars);
+    }
+    public static List<String> NODE_ATTRS;
+    static {
+        char[] chars = new char[16];
+        Arrays.fill(chars, '?');
+        NODE_ATTRS = new ArrayList<>(40);
+        for (int i = 0; i < 40; i++) {
+            NODE_ATTRS.set(i, new String(chars));
+        }
+    }
+
     public static final int assocCount_query = 11999774;
     public static final int assocCount_warmup = 1999959;
     //public static final int assocGet_query = 12000000;
@@ -141,12 +158,14 @@ public abstract class Benchmark<T> {
             }
             WARMUP_N = Integer.parseInt(args[5]);
             MEASURE_N = Integer.parseInt(args[6]);
+            NUM_NODES = Long.parseLong(args[7]);
             b.benchLatency();
         } else if ("throughput".equals(latencyOrThroughput)) {
             int numClients = Integer.parseInt(args[5]);
             WARMUP_TIME = (long) (Integer.parseInt(args[6]) * 1E9);
             MEASURE_TIME = (long) (Integer.parseInt(args[7]) * 1E9);
             COOLDOWN_TIME = (long) (Integer.parseInt(args[8]) * 1E9);
+            NUM_NODES = Long.parseLong(args[9]);
             b.benchThroughput(numClients);
         } else {
             System.err.println("Please choose 'latency' or 'throughput'.");

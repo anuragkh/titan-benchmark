@@ -137,6 +137,15 @@ public class Graph {
         return results;
     }
 
+    public void objAdd(long id, List<String> attrs) {
+        Vertex node = txn.addVertex(TitanId.toVertexId(id + offset));
+        for (int i = 0; i < attrs.size(); i++) {
+            node.setProperty("attr" + i, attrs.get(i));
+        }
+
+        // TODO: Should add commit to make objAdd persistent
+    }
+
     public List<Assoc> assocRange(long id, int atype, int offset, int length) {
         TitanVertex node = getNode(id);
         List<Assoc> assocs = new ArrayList<>();
@@ -165,6 +174,16 @@ public class Graph {
         }
         Collections.sort(assocs);
         return assocs;
+    }
+
+    public void assocAdd(long id1, long id2, int atype, long timestamp, String property) {
+        Vertex v1 = txn.getVertex(TitanId.toVertexId(id1));
+        Vertex v2 = txn.getVertex(TitanId.toVertexId(id2));
+        Edge edge = txn.addEdge(null, v1, v2, String.valueOf(atype));
+        edge.setProperty("timestamp", timestamp);
+        edge.setProperty("property", property);
+
+        // TODO: Should add commit to make assocAdd persistent
     }
 
     public long assocCount(long id, int atype) {
