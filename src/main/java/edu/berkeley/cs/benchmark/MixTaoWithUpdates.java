@@ -150,14 +150,14 @@ public class MixTaoWithUpdates extends Benchmark<Object> {
                     break;
                 case 5:
                     // assoc_add
-                    id1 = rand.nextLong() % NUM_NODES;
-                    id2 = rand.nextLong() % NUM_NODES;
+                    id1 = Math.abs(rand.nextLong()) % NUM_NODES;
+                    id2 = Math.abs(rand.nextLong()) % NUM_NODES;
                     atype = rand.nextInt(5);
                     graph.assocAdd(id1, id2, atype, System.currentTimeMillis(), EDGE_ATTR);
                     break;
                 case 6:
                     // obj_add
-                    graph.objAdd(Integer.MAX_VALUE + rand.nextLong() % Integer.MAX_VALUE, NODE_ATTRS);
+                    graph.objAdd(Integer.MAX_VALUE + (long) rand.nextInt(Integer.MAX_VALUE), NODE_ATTRS);
                     break;
             }
         }
@@ -234,8 +234,8 @@ public class MixTaoWithUpdates extends Benchmark<Object> {
                 case 5:
                     // assoc_add
                     start = System.nanoTime();
-                    id1 = rand.nextLong() % NUM_NODES;
-                    id2 = rand.nextLong() % NUM_NODES;
+                    id1 = Math.abs(rand.nextLong()) % NUM_NODES;
+                    id2 = Math.abs(rand.nextLong()) % NUM_NODES;
                     atype = rand.nextInt(5);
                     graph.assocAdd(id1, id2, atype, System.currentTimeMillis(), EDGE_ATTR);
                     end = System.nanoTime();
@@ -244,7 +244,7 @@ public class MixTaoWithUpdates extends Benchmark<Object> {
                 case 6:
                     // obj_add
                     start = System.nanoTime();
-                    graph.objAdd(Integer.MAX_VALUE + rand.nextLong() % Integer.MAX_VALUE, NODE_ATTRS);
+                    graph.objAdd(Integer.MAX_VALUE + (long) rand.nextInt(Integer.MAX_VALUE), NODE_ATTRS);
                     end = System.nanoTime();
                     objAddOut.println("1," + (end - start) / 1e3);
                     break;
@@ -314,14 +314,14 @@ public class MixTaoWithUpdates extends Benchmark<Object> {
                         break;
                     case 5:
                         // assoc_add
-                        id1 = rand.nextLong() % NUM_NODES;
-                        id2 = rand.nextLong() % NUM_NODES;
+                        id1 = Math.abs(rand.nextLong()) % NUM_NODES;
+                        id2 = Math.abs(rand.nextLong()) % NUM_NODES;
                         atype = rand.nextInt(5);
                         g.assocAdd(id1, id2, atype, System.currentTimeMillis(), EDGE_ATTR);
                         break;
                     case 6:
                         // obj_add
-                        g.objAdd(Integer.MAX_VALUE + rand.nextLong() % Integer.MAX_VALUE, NODE_ATTRS);
+                        g.objAdd(Integer.MAX_VALUE + (long) rand.nextInt(Integer.MAX_VALUE), NODE_ATTRS);
                         break;
 
                 }
@@ -372,14 +372,14 @@ public class MixTaoWithUpdates extends Benchmark<Object> {
                                 assocTimeRangeLimits[i]).size();
                     case 5:
                         // assoc_add
-                        id1 = rand.nextLong() % NUM_NODES;
-                        id2 = rand.nextLong() % NUM_NODES;
+                        id1 = Math.abs(rand.nextLong()) % NUM_NODES;
+                        id2 = Math.abs(rand.nextLong()) % NUM_NODES;
                         atype = rand.nextInt(5);
                         g.assocAdd(id1, id2, atype, System.currentTimeMillis(), EDGE_ATTR);
                         return 1;
                     case 6:
                         // obj_add
-                        g.objAdd(Integer.MAX_VALUE + rand.nextLong() % Integer.MAX_VALUE, NODE_ATTRS);
+                        g.objAdd(Integer.MAX_VALUE + (long) rand.nextInt(Integer.MAX_VALUE), NODE_ATTRS);
                         return 1;
                 }
                 return 0;

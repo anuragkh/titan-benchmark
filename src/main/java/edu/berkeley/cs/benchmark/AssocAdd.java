@@ -16,8 +16,8 @@ public class AssocAdd extends Benchmark<Integer> {
 
     @Override
     public Integer warmupQuery(Graph g, int i) {
-        long id1 = warmupRand.nextLong() % NUM_NODES;
-        long id2 = warmupRand.nextLong() % NUM_NODES;
+        long id1 = Math.abs(warmupRand.nextLong()) % NUM_NODES;
+        long id2 = Math.abs(warmupRand.nextLong()) % NUM_NODES;
         int atype = warmupRand.nextInt(5);
         g.assocAdd(id1, id2, atype, System.currentTimeMillis(), EDGE_ATTR);
         return 0;
@@ -25,8 +25,8 @@ public class AssocAdd extends Benchmark<Integer> {
 
     @Override
     public Integer query(Graph g, int i) {
-        long id1 = rand.nextLong() % NUM_NODES;
-        long id2 = rand.nextLong() % NUM_NODES;
+        long id1 = Math.abs(rand.nextLong()) % NUM_NODES;
+        long id2 = Math.abs(rand.nextLong()) % NUM_NODES;
         int atype = rand.nextInt(5);
         g.assocAdd(id1, id2, atype, System.currentTimeMillis(), EDGE_ATTR);
         return 0;

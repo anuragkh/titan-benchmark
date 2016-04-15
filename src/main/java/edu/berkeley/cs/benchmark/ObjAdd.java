@@ -16,14 +16,14 @@ public class ObjAdd extends Benchmark<Integer> {
 
     @Override
     public Integer warmupQuery(Graph g, int i) {
-        long nodeId = Integer.MAX_VALUE + warmupRand.nextLong() % Integer.MAX_VALUE;
+        long nodeId = Integer.MAX_VALUE + (long) warmupRand.nextInt(Integer.MAX_VALUE);
         g.objAdd(nodeId, NODE_ATTRS);
         return 0;
     }
 
     @Override
     public Integer query(Graph g, int i) {
-        long nodeId = Integer.MAX_VALUE + rand.nextLong() % Integer.MAX_VALUE;
+        long nodeId = Integer.MAX_VALUE + (long) rand.nextInt(Integer.MAX_VALUE);
         g.objAdd(nodeId, NODE_ATTRS);
         return 0;
     }
