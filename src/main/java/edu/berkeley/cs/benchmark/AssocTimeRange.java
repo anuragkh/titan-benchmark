@@ -45,6 +45,23 @@ public class AssocTimeRange extends Benchmark<List<Assoc>> {
                 assocTimeRangeLimits[i]);
     }
 
+    @Override
+    public RunThroughput getThroughputJob(int clientId) {
+        return new RunThroughput(clientId) {
+            @Override
+            public void warmupQuery() {
+                int idx = rand.nextInt(assocGet_warmup);
+                AssocTimeRange.this.warmupQuery(g, idx);
+            }
+
+            @Override
+            public int query() {
+                int idx = rand.nextInt(assocGet_query);
+                return AssocTimeRange.this.query(g, idx).size();
+            }
+        };
+    }
+
     static void readAssocTimeRangeQueries(
             String file, long[] nodes, int[] atypes,
             long[] tLows, long[] tHighs, int[] limits) {

@@ -45,6 +45,23 @@ public class AssocGet extends Benchmark<List<Assoc>> {
                 assocGetTimeHighs[i]);
     }
 
+    @Override
+    public RunThroughput getThroughputJob(int clientId) {
+        return new RunThroughput(clientId) {
+            @Override
+            public void warmupQuery() {
+                int idx = rand.nextInt(assocGet_warmup);
+                AssocGet.this.warmupQuery(g, idx);
+            }
+
+            @Override
+            public int query() {
+                int idx = rand.nextInt(assocGet_query);
+                return AssocGet.this.query(g, idx).size();
+            }
+        };
+    }
+
     static void readAssocGetQueries(
             String file, long[] nodes, int[] atypes,
             long[][] dstIdSets, long[] tLows, long[] tHighs) {

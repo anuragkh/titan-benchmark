@@ -22,4 +22,21 @@ public class AssocCount extends Benchmark<Long> {
         return g.assocCount(assocCountNodes[i], assocCountAtypes[i]);
     }
 
+    @Override
+    public RunThroughput getThroughputJob(int clientId) {
+        return new RunThroughput(clientId) {
+            @Override
+            public void warmupQuery() {
+                int idx = rand.nextInt(assocCount_warmup);
+                AssocCount.this.warmupQuery(g, idx);
+            }
+
+            @Override
+            public int query() {
+                int idx = rand.nextInt(assocCount_query);
+                return AssocCount.this.query(g, idx).intValue();
+            }
+        };
+    }
+
 }

@@ -23,4 +23,22 @@ public class ObjGet extends Benchmark<List<String>> {
     public List<String> query(Graph g, int i) {
         return g.objGet(objGetIds[i]);
     }
+
+    @Override
+    public RunThroughput getThroughputJob(int clientId) {
+        return new RunThroughput(clientId) {
+            @Override
+            public void warmupQuery() {
+                int idx = rand.nextInt(assocGet_warmup);
+                ObjGet.this.warmupQuery(g, idx);
+            }
+
+            @Override
+            public int query() {
+                int idx = rand.nextInt(assocGet_query);
+                return ObjGet.this.query(g, idx).size();
+            }
+        };
+    }
+
 }
