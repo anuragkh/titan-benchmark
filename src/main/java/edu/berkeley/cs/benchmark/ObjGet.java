@@ -29,13 +29,13 @@ public class ObjGet extends Benchmark<List<String>> {
         return new RunThroughput(clientId) {
             @Override
             public void warmupQuery() {
-                int idx = rand.nextInt(assocGet_warmup);
+                int idx = rand.nextInt(objGet_warmup);
                 ObjGet.this.warmupQuery(g, idx);
             }
 
             @Override
             public int query() {
-                int idx = rand.nextInt(assocGet_query);
+                int idx = rand.nextInt(objGet_query);
                 return ObjGet.this.query(g, idx).size();
             }
         };

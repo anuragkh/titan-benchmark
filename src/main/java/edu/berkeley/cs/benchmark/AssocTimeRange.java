@@ -50,13 +50,13 @@ public class AssocTimeRange extends Benchmark<List<Assoc>> {
         return new RunThroughput(clientId) {
             @Override
             public void warmupQuery() {
-                int idx = rand.nextInt(assocGet_warmup);
+                int idx = rand.nextInt(assocTimeRange_warmup);
                 AssocTimeRange.this.warmupQuery(g, idx);
             }
 
             @Override
             public int query() {
-                int idx = rand.nextInt(assocGet_query);
+                int idx = rand.nextInt(assocTimeRange_query);
                 return AssocTimeRange.this.query(g, idx).size();
             }
         };
