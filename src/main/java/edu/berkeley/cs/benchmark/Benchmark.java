@@ -45,8 +45,8 @@ public abstract class Benchmark<T> {
     public static final int objGet_warmup = 2000000;
     public static final int neighborAtype_query = 10000000;
     public static final int neighborAtype_warmup = 2000000;
-    public static final int edgeAttr_warmup = 10000000;
-    public static final int edgeAttr_query = 2000000;
+    public static final int edgeAttr_query = 10000000;
+    public static final int edgeAttr_warmup = 2000000;
     public static final int neighborNode_query = 6000000;
     public static final int neighborNode_warmup = 1000000;
     public static final int neighbor_query = 6000000;
