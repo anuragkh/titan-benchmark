@@ -33,26 +33,26 @@ public abstract class Benchmark<T> {
         }
     }
 
-    public static final int assocCount_query = 1000000;
-    public static final int assocCount_warmup = 200000;
+    public static final int assocCount_query = 10000000;
+    public static final int assocCount_warmup = 2000000;
     public static final int assocGet_query = 1000000;
     public static final int assocGet_warmup = 200000;
-    public static final int assocRange_query = 1000000;
-    public static final int assocRange_warmup = 200000;
-    public static final int assocTimeRange_query = 1000000;
-    public static final int assocTimeRange_warmup = 200000;
-    public static final int objGet_query = 1000000;
-    public static final int objGet_warmup = 200000;
-    public static final int neighborAtype_query = 1000000;
-    public static final int neighborAtype_warmup = 200000;
-    public static final int edgeAttr_warmup = neighborAtype_warmup;
-    public static final int edgeAttr_query = neighborAtype_query;
-    public static final int neighborNode_query = 1000000;
-    public static final int neighborNode_warmup = 200000;
-    public static final int neighbor_query = 1000000;
-    public static final int neighbor_warmup = 200000;
-    public static final int node_query = 1000000;
-    public static final int node_warmup = 200000;
+    public static final int assocRange_query = 10000000;
+    public static final int assocRange_warmup = 2000000;
+    public static final int assocTimeRange_query = 10000000;
+    public static final int assocTimeRange_warmup = 2000000;
+    public static final int objGet_query = 10000000;
+    public static final int objGet_warmup = 2000000;
+    public static final int neighborAtype_query = 10000000;
+    public static final int neighborAtype_warmup = 2000000;
+    public static final int edgeAttr_warmup = 10000000;
+    public static final int edgeAttr_query = 2000000;
+    public static final int neighborNode_query = 6000000;
+    public static final int neighborNode_warmup = 1000000;
+    public static final int neighbor_query = 6000000;
+    public static final int neighbor_warmup = 1000000;
+    public static final int node_query = 6000000;
+    public static final int node_warmup = 1000000;
 
     static String name;
     static String queryPath;

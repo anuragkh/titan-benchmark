@@ -7,13 +7,29 @@ mvn -f /home/ubuntu/titan-benchmark/pom.xml compile
 
 query_dir=$2
 
-WARMUP_FILES="assocCount_warmup  assocGet_warmup  assocRange_warmup  assocTimeRange_warmup  neighborAtype_warmup_100000  neighbor_node_warmup_100000  neighbor_warmup_100000  objGet_warmup"
-QUERY_FILES="assocCount_query  assocGet_query  assocRange_query  assocTimeRange_query  neighborAtype_query_100000  neighbor_node_query_100000  neighbor_query_100000  objGet_query"
+shuf -n 2000000 $query_dir/assocCount_warmup > $query_dir/assocCount_warmup.txt
+shuf -n 10000000 $query_dir/assocCount_query > $query_dir/assocCount_query.txt
 
-for w in $WARMUP_FILES; do
-  shuf -n 200000 $query_dir/$w > $query_dir/${w}.txt
-done
+shuf -n 200000 $query_dir/assocGet_warmup > $query_dir/assocGet_warmup.txt
+shuf -n 1000000 $query_dir/assocGet_query > $query_dir/assocGet_query.txt
 
-for q in $QUERY_FILES; do
-  shuf -n 1000000 $query_dir/$q > $query_dir/${q}.txt
-done
+shuf -n 2000000 $query_dir/assocRange_warmup > $query_dir/assocRange_warmup.txt
+shuf -n 10000000 $query_dir/assocRange_query > $query_dir/assocRange_query.txt
+
+shuf -n 2000000 $query_dir/assocTimeRange_warmup > $query_dir/assocTimeRange_warmup.txt
+shuf -n 10000000 $query_dir/assocTimeRange_query > $query_dir/assocTimeRange_query.txt
+
+shuf -n 2000000 $query_dir/objGet_warmup > $query_dir/objGet_warmup.txt
+shuf -n 10000000 $query_dir/objGet_query > $query_dir/objGet_query.txt
+
+shuf -n 2000000 $query_dir/neighborAtype_warmup_100000 > $query_dir/neighborAtype_warmup_100000.txt
+shuf -n 10000000 $query_dir/neighborAtype_query_100000 > $query_dir/neighborAtype_query_100000.txt
+
+shuf -n 1000000 $query_dir/neighbor_node_warmup_100000 > $query_dir/neighbor_node_warmup_100000.txt
+shuf -n 6000000 $query_dir/neighbor_node_query_100000 > $query_dir/neighbor_node_query_100000.txt
+
+shuf -n 1000000 $query_dir/neighbor_warmup_100000 > $query_dir/neighbor_warmup_100000.txt
+shuf -n 6000000 $query_dir/neighbor_query_100000 > $query_dir/neighbor_query_100000.txt
+
+shuf -n 1000000 $query_dir/node_query_100000 > $query_dir/node_query_100000.txt
+shuf -n 6000000 $query_dir/node_warmup_100000 > $query_dir/node_warmup_100000.txt
