@@ -8,7 +8,7 @@ sbin="`cd "$sbin"; pwd`"
 
 dataset=twitter
 HOSTLIST=`cat ${sbin}/../conf/hosts`
-query_dir=~/queries
+query_dir=~/${dataset}Queries
 results=~/results
 mkdir -p $results
 OUTPUT_DIR=output
@@ -26,29 +26,30 @@ else
     exit
 fi
 
-numClients=(16 64)
+numClients=( 16 16 )
 tests=(
-  # Primitive queries
+  ## Primitive queries
   Neighbor
   NeighborNode
   EdgeAttr
   NeighborAtype
   NodeNode
   MixPrimitive
-  # TAO queries
-  # AssocRange
-  # ObjGet
-  # AssocGet
-  # AssocCount
-  # AssocTimeRange
+  ## TAO queries
+  AssocRange
+  ObjGet
+  AssocGet
+  AssocCount
+  AssocTimeRange
   MixTao
-  # MixTaoWithUpdates
+  MixTaoWithUpdates
 )
 
 bash ${sbin}/sync.sh ${sbin}/../
 
-bash ${sbin}/hosts.sh \
-  source ${sbin}/prepare.sh ${OUTPUT_DIR} ${query_dir}
+function prepare() {
+bash ${sbin}/hosts.sh bash ${sbin}/prepare.sh ${OUTPUT_DIR} ${query_dir}
+}
 
 function restart_all() {
   bash ${sbin}/hosts.sh \
@@ -62,6 +63,7 @@ function timestamp() {
 for clients in ${numClients[*]}; do
     for test in "${tests[@]}"; do
       restart_all
+      prepare
 
       launcherStart=$(date +"%s")
       bash ${sbin}/hosts.sh \
