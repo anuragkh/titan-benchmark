@@ -6,5 +6,4 @@ nodetool invalidaterowcache
 nodetool invalidatekeycache
 nodetool invalidatecountercache
 nodetool enablethrift
-sleep 10
 nodetool statusthrift
