@@ -9,13 +9,13 @@ sbin="`cd "$sbin"; pwd`"
 dataset=twitter
 HOSTLIST=`cat ${sbin}/../conf/hosts`
 query_dir=~/${dataset}Queries
-results=~/results
+results=~/${dataset}Results
 mkdir -p $results
 OUTPUT_DIR=output
 
 warmup=$((3*60))
 measure=$((5*60))
-cooldown=$((10*60))
+cooldown=$((3*60))
 
 if [ "$dataset" = "twitter" ]; then
     NUM_NODES="41652230"
@@ -26,23 +26,26 @@ else
     exit
 fi
 
-numClients=( 16 16 )
+numClients=( 56 56 )
 tests=(
-  ## Primitive queries
-  Neighbor
-  NeighborNode
-  EdgeAttr
-  NeighborAtype
-  NodeNode
-  MixPrimitive
-  ## TAO queries
-  AssocRange
-  ObjGet
-  AssocGet
-  AssocCount
-  AssocTimeRange
+  ## Mix queries
+  #MixPrimitive
   MixTao
   MixTaoWithUpdates
+
+  ## Primitive queries
+  #Neighbor
+  #NeighborNode
+  #EdgeAttr
+  #NeighborAtype
+  #NodeNode
+  
+  ## TAO queries
+  #AssocRange
+  #ObjGet
+  AssocGet
+  #AssocCount
+  #AssocTimeRange
 )
 
 bash ${sbin}/sync.sh ${sbin}/../

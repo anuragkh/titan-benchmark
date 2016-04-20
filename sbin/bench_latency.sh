@@ -9,7 +9,7 @@ sbin="`cd "$sbin"; pwd`"
 dataset=twitter
 server=`tail -n 1 ${sbin}/../conf/hosts`
 query_dir=~/${dataset}Queries
-results=~/results
+results=~/${dataset}Results
 mkdir -p $results
 OUTPUT_DIR=output
 
@@ -27,17 +27,17 @@ fi
 
 tests=(
   ## Primitive queries
-  #Neighbor
-  #NeighborNode
-  #EdgeAttr
-  #NeighborAtype
-  #NodeNode
+  Neighbor
+  NeighborNode
+  EdgeAttr
+  NeighborAtype
+  NodeNode
   ## TAO queries
-  #AssocRange
-  #ObjGet
-  #AssocGet
-  #AssocCount
-  #AssocTimeRange
+  AssocRange
+  ObjGet
+  AssocGet
+  AssocCount
+  AssocTimeRange
 )
 
 bash ${sbin}/sync.sh ${sbin}/../
