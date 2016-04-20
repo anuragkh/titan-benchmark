@@ -74,7 +74,7 @@ public class Load {
     }
 
     private static void loadGraph(TitanGraph g, Configuration conf) throws IOException {
-        BatchGraph bg = new BatchGraph(g, VertexIDType.NUMBER, 10000);
+        BatchGraph bg = new BatchGraph(g, VertexIDType.NUMBER, 1000);
 
         int propertySize = conf.getInt("property.size");
         int numProperty = conf.getInt("property.total");
@@ -94,8 +94,9 @@ public class Load {
                     String attr = tokens.next().substring(1); // trim first delimiter character
                     node.setProperty("attr" + i, attr);
                 }
-                if (++c%100000L == 0L) {
+                if (++c%1000L == 0L) {
                     System.out.println("Processed " + c + " nodes");
+                    bg.commit();
                 }
             }
         }
@@ -121,8 +122,9 @@ public class Load {
                 Edge edge = bg.addEdge(null, v1, v2, atype);
                 edge.setProperty("timestamp", timestamp);
                 edge.setProperty("property", property);
-                if (++c%100000L == 0L) {
+                if (++c%1000L == 0L) {
                     System.out.println("Processed " + c + " edges");
+                    bg.commit();
                 }
             }
         }
