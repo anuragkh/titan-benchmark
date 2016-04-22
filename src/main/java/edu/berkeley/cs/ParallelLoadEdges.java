@@ -65,9 +65,9 @@ public class ParallelLoadEdges {
         titanConfig.setProperty("graph.set-vertex-id", true);
         titanConfig.setProperty("storage.cassandra.keyspace", config.getString("name"));
         titanConfig.setProperty("storage.batch-loading", true);
-        titanConfig.setProperty("storage.read-attempts", 20);
-        titanConfig.setProperty("storage.write-attempts", 20);
-        titanConfig.setProperty("storage.attempt-wait", 2000);
+        titanConfig.setProperty("storage.read-attempts", "20");
+        titanConfig.setProperty("storage.write-attempts", "20");
+        titanConfig.setProperty("storage.attempt-wait", "2000");
 
         TitanGraph g = TitanFactory.open(titanConfig);
         createSchemaIfNotExists(g, config);
@@ -144,7 +144,18 @@ public class ParallelLoadEdges {
                 edge.setProperty("property", property);
                 if (++c%1000L == 0L) {
                     System.out.println("Processed " + c + " edges");
-                    g.commit();
+                    boolean success = false;
+                    while (!success) {
+                        try {
+                            g.commit();
+                        } catch (TitanException e) {
+                            System.out.print("Commit failed: ");
+                            e.printStackTrace();
+                            System.out.println("Retrying...");
+                            continue;
+                        }
+                        success = true;
+                    }
                 }
             }
         }
