@@ -1,35 +1,85 @@
 package edu.berkeley.cs;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.thinkaurelius.titan.core.*;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.thinkaurelius.titan.core.util.TitanId;
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
-import com.tinkerpop.blueprints.util.wrappers.batch.VertexIDType;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Load {
+public class ParallelLoadNodes {
+
+    private static int propertySize;
+    private static int numProperty;
+    private static int offset;
+    private static String[] nodeFiles;
 
     public static void main(String[] args) throws ConfigurationException, IOException {
         Configuration config = new PropertiesConfiguration(
-                Load.class.getResource("/benchmark.properties"));
+                ParallelLoadNodes.class.getResource("/benchmark.properties"));
+
+        propertySize = config.getInt("property.size");
+        numProperty = config.getInt("property.total");
+        offset = config.getBoolean("zero_indexed") ? 1 : 0;
+        nodeFiles = args;
+
         Configuration titanConfiguration = new PropertiesConfiguration(
-                Load.class.getResource("/titan-cassandra.properties"));
+                ParallelLoadNodes.class.getResource("/titan-cassandra.properties"));
+
         load(config, titanConfiguration);
 
         System.exit(0);
+    }
+
+    static class NodeLoader implements Runnable {
+
+        TitanGraph g;
+        String nodeFile;
+        long seed;
+
+        public NodeLoader(TitanGraph g, String nodeFile, long seed) {
+            this.g = g;
+            this.nodeFile = nodeFile;
+            this.seed = seed;
+        }
+
+        @Override public void run() {
+            try {
+                loadNodes(g, nodeFile, seed);
+            } catch (IOException e) {
+                System.err.println("NodeLoader thread failed: ");
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public static int countLines(String filename) throws IOException {
+        try (InputStream is = new BufferedInputStream(new FileInputStream(filename))) {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars;
+            boolean endsWithoutNewLine = false;
+            while ((readChars = is.read(c)) != -1) {
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n')
+                        ++count;
+                }
+                endsWithoutNewLine = (c[readChars - 1] != '\n');
+            }
+            if (endsWithoutNewLine) {
+                ++count;
+            }
+            return count;
+        }
     }
 
     public static void load(Configuration config, Configuration titanConfig) throws IOException {
@@ -44,11 +94,28 @@ public class Load {
 
         TitanGraph g = TitanFactory.open(titanConfig);
         createSchemaIfNotExists(g, config);
-        if (g.getVertices().iterator().hasNext()) {
-            System.err.print("Warning! Graph already has data!");
-        } else {
-            loadGraph(g, config);
+
+        long lineCount = 0;
+        List<Thread> threads = new ArrayList<>(nodeFiles.length);
+        for (String nodeFile : nodeFiles) {
+            long seed = 1L + lineCount;
+            threads.add(new Thread(new NodeLoader(g, nodeFile, seed)));
+            lineCount += countLines(nodeFile);
         }
+
+        for (Thread thread: threads) {
+            thread.start();
+        }
+
+        try {
+            for (Thread thread: threads) {
+                thread.join();
+            }
+        } catch (InterruptedException e) {
+            System.err.println("NodeLoader thread failed: ");
+            e.printStackTrace();
+        }
+
     }
 
     private static void createSchemaIfNotExists(TitanGraph g, Configuration config) {
@@ -77,22 +144,17 @@ public class Load {
         mgmt.commit();
     }
 
-    private static void loadGraph(TitanGraph g, Configuration conf) throws IOException {
-        BatchGraph<TitanGraph> bg = new BatchGraph<>(g, VertexIDType.NUMBER, 1000);
+    private static void loadNodes(TitanGraph g, String nodeFile, long seed) throws IOException {
+        System.out.printf("Loading nodeFile %s...\n", nodeFile);
 
-        int propertySize = conf.getInt("property.size");
-        int numProperty = conf.getInt("property.total");
-        String nodeFile = conf.getString("data.node");
-        String edgeFile = conf.getString("data.edge");
-        int offset = conf.getBoolean("zero_indexed") ? 1 : 0;
-        System.out.printf("nodeFile %s, edgeFile %s, propertySize %d\n", nodeFile, edgeFile, propertySize);
-
-        long c = 1L;
+        long c = seed;
         try (BufferedReader br = new BufferedReader(new FileReader(nodeFile))) {
             for (String line; (line = br.readLine()) != null; ) {
                 // Node file has funky carriage return ^M, so we read one more line to finish the node information
                 line += '\02' + br.readLine(); // replace carriage return with dummy line
-                Vertex node = bg.addVertex(TitanId.toVertexId(c));
+                Vertex node = g.addVertex(TitanId.toVertexId(c));
+
+                // Vertex node = bg.addVertex(TitanId.toVertexId(c));
                 Iterator<String> tokens = Splitter.fixedLength(propertySize + 1).split(line).iterator();
                 for (int i = 0; i < numProperty; i++) {
                     String attr = tokens.next().substring(1); // trim first delimiter character
@@ -100,39 +162,11 @@ public class Load {
                 }
                 if (++c%1000L == 0L) {
                     System.out.println("Processed " + c + " nodes");
-                    bg.commit();
+                    g.commit();
                 }
             }
         }
 
-        bg.commit();
-
-        c = 1L;
-        try (BufferedReader br = new BufferedReader(new FileReader(edgeFile))) {
-            for (String line; (line = br.readLine()) != null; ) {
-                List<String> tokens = Lists.newArrayList(Splitter.on(' ').limit(4).split(line));
-                Long id1 = Long.parseLong(tokens.get(0)) + offset;
-                Long id2 = Long.parseLong(tokens.get(1)) + offset;
-
-                String atype = tokens.get(2);
-                String tsAndProp = tokens.get(3);
-                int splitIdx = tsAndProp.indexOf(' ');
-
-                Long timestamp = Long.parseLong(tsAndProp.substring(0, splitIdx));
-                String property = tsAndProp.substring(splitIdx + 1);
-
-                Vertex v1 = bg.getVertex(TitanId.toVertexId(id1));
-                Vertex v2 = bg.getVertex(TitanId.toVertexId(id2));
-                Edge edge = bg.addEdge(null, v1, v2, atype);
-                edge.setProperty("timestamp", timestamp);
-                edge.setProperty("property", property);
-                if (++c%1000L == 0L) {
-                    System.out.println("Processed " + c + " edges");
-                    bg.commit();
-                }
-            }
-        }
-
-        bg.commit();
+        g.commit();
     }
 }
