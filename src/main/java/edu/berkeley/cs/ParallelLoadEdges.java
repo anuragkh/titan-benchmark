@@ -121,6 +121,7 @@ public class ParallelLoadEdges {
         System.out.printf("Loading edgeFile %s...\n", edgeFile);
 
         long c = 1L;
+        long startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new FileReader(edgeFile))) {
             for (String line; (line = br.readLine()) != null; ) {
                 List<String> tokens = Lists.newArrayList(Splitter.on(' ').limit(4).split(line));
@@ -141,7 +142,10 @@ public class ParallelLoadEdges {
                 edge.setProperty("property", property);
                 if (++c%1000L == 0L) {
                     if (c % 100000L == 0) {
-                        System.out.println("Processed " + c + " edges from file " + edgeFile);
+                        System.out.println("Processed " + c + " edges from file " + edgeFile
+                          + " in " + (System.currentTimeMillis() - startTime) + " ms ("
+                          + (c * 1000 / (System.currentTimeMillis() - startTime)) + " edges/s)"
+                        );
                     }
                     boolean success = false;
                     while (!success) {
