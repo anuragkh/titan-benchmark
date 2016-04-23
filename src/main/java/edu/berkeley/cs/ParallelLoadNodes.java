@@ -157,7 +157,7 @@ public class ParallelLoadNodes {
                 }
                 if (++c%1000L == 0L) {
                     if (c % 100000L == 0L) {
-                        System.out.println("Processed " + c + " nodes from file " + nodeFile);
+                        System.out.println("Processed " + (c - seed) + " nodes from file " + nodeFile);
                     }
                     boolean success = false;
                     while (!success) {
@@ -188,5 +188,6 @@ public class ParallelLoadNodes {
             success = true;
         }
         System.out.println("Finished loading nodes from nodeFile " + nodeFile);
+        System.out.println("Processed " + (c - seed) + " nodes.");
     }
 }

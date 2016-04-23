@@ -172,5 +172,6 @@ public class ParallelLoadEdges {
             success = true;
         }
         System.out.println("Finished loading nodes from nodeFile " + edgeFile);
+        System.out.println("Processed " + c + " edges.");
     }
 }
