@@ -140,7 +140,9 @@ public class ParallelLoadEdges {
                 edge.setProperty("timestamp", timestamp);
                 edge.setProperty("property", property);
                 if (++c%1000L == 0L) {
-                    System.out.println("Processed " + c + " edges");
+                    if (c % 100000L == 0) {
+                        System.out.println("Processed " + c + " edges from file " + edgeFile);
+                    }
                     boolean success = false;
                     while (!success) {
                         try {
@@ -157,7 +159,18 @@ public class ParallelLoadEdges {
             }
         }
 
-        g.commit();
+        boolean success = false;
+        while (!success) {
+            try {
+                g.commit();
+            } catch (TitanException e) {
+                System.out.print("Commit failed: ");
+                e.printStackTrace();
+                System.out.println("Retrying...");
+                continue;
+            }
+            success = true;
+        }
         System.out.println("Finished loading nodes from nodeFile " + edgeFile);
     }
 }

@@ -156,7 +156,9 @@ public class ParallelLoadNodes {
                     node.setProperty("attr" + i, attr);
                 }
                 if (++c%1000L == 0L) {
-                    System.out.println("Processed " + c + " nodes");
+                    if (c % 100000L == 0L) {
+                        System.out.println("Processed " + c + " nodes from file " + nodeFile);
+                    }
                     boolean success = false;
                     while (!success) {
                         try {
@@ -173,7 +175,18 @@ public class ParallelLoadNodes {
             }
         }
 
-        g.commit();
+        boolean success = false;
+        while (!success) {
+            try {
+                g.commit();
+            } catch (TitanException e) {
+                System.out.print("Commit failed: ");
+                e.printStackTrace();
+                System.out.println("Retrying...");
+                continue;
+            }
+            success = true;
+        }
         System.out.println("Finished loading nodes from nodeFile " + nodeFile);
     }
 }
