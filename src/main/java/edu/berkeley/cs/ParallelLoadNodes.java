@@ -19,7 +19,6 @@ public class ParallelLoadNodes {
 
     private static int propertySize;
     private static int numProperty;
-    private static int offset;
     private static String[] nodeFiles;
 
     public static void main(String[] args) throws ConfigurationException, IOException {
@@ -28,7 +27,6 @@ public class ParallelLoadNodes {
 
         propertySize = config.getInt("property.size");
         numProperty = config.getInt("property.total");
-        offset = config.getBoolean("zero_indexed") ? 1 : 0;
         nodeFiles = args;
 
         Configuration titanConfiguration = new PropertiesConfiguration(
@@ -88,9 +86,6 @@ public class ParallelLoadNodes {
         titanConfig.setProperty("graph.set-vertex-id", true);
         titanConfig.setProperty("storage.cassandra.keyspace", config.getString("name"));
         titanConfig.setProperty("storage.batch-loading", true);
-        titanConfig.setProperty("storage.read-attempts", 20);
-        titanConfig.setProperty("storage.write-attempts", 20);
-        titanConfig.setProperty("storage.attempt-wait", 2000);
 
         TitanGraph g = TitanFactory.open(titanConfig);
         createSchemaIfNotExists(g, config);
@@ -145,7 +140,7 @@ public class ParallelLoadNodes {
     }
 
     private static void loadNodes(TitanGraph g, String nodeFile, long seed) throws IOException {
-        System.out.printf("Loading nodeFile %s...\n", nodeFile);
+        System.out.println("Loading nodeFile " + nodeFile);
 
         long c = seed;
         try (BufferedReader br = new BufferedReader(new FileReader(nodeFile))) {
@@ -162,11 +157,23 @@ public class ParallelLoadNodes {
                 }
                 if (++c%1000L == 0L) {
                     System.out.println("Processed " + c + " nodes");
-                    g.commit();
+                    boolean success = false;
+                    while (!success) {
+                        try {
+                            g.commit();
+                        } catch (TitanException e) {
+                            System.out.print("Commit failed: ");
+                            e.printStackTrace();
+                            System.out.println("Retrying...");
+                            continue;
+                        }
+                        success = true;
+                    }
                 }
             }
         }
 
         g.commit();
+        System.out.println("Finished loading nodes from nodeFile " + nodeFile);
     }
 }
