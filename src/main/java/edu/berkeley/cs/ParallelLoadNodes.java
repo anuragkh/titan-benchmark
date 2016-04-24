@@ -86,6 +86,9 @@ public class ParallelLoadNodes {
         titanConfig.setProperty("graph.set-vertex-id", true);
         titanConfig.setProperty("storage.cassandra.keyspace", config.getString("name"));
         titanConfig.setProperty("storage.batch-loading", true);
+        titanConfig.setProperty("storage.buffer-size", 5120);
+        titanConfig.setProperty("ids.block-size", 10000000);
+        titanConfig.setProperty("ids.authority.wait-time", 60000);
 
         TitanGraph g = TitanFactory.open(titanConfig);
         createSchemaIfNotExists(g, config);
@@ -143,6 +146,7 @@ public class ParallelLoadNodes {
         System.out.println("Loading nodeFile " + nodeFile);
 
         long c = seed;
+        long startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new FileReader(nodeFile))) {
             for (String line; (line = br.readLine()) != null; ) {
                 // Node file has funky carriage return ^M, so we read one more line to finish the node information
@@ -155,7 +159,11 @@ public class ParallelLoadNodes {
                 }
                 if (++c%1000L == 0L) {
                     if (c % 100000L == 0L) {
-                        System.out.println("Processed " + (c - seed) + " nodes from file " + nodeFile);
+                        System.out.println("Processed " + (c - seed) + " nodes from file "
+                          + nodeFile + " in " + (System.currentTimeMillis() - startTime) + "ms ("
+                          + ((c - seed) * 1000 / (System.currentTimeMillis() - startTime))
+                          + " nodes/s)"
+                        );
                     }
                     try {
                         g.commit();
