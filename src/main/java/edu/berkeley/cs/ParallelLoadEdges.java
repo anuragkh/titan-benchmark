@@ -147,33 +147,21 @@ public class ParallelLoadEdges {
                           + (c * 1000 / (System.currentTimeMillis() - startTime)) + " edges/s)"
                         );
                     }
-                    boolean success = false;
-                    while (!success) {
-                        try {
-                            g.commit();
-                        } catch (TitanException e) {
-                            System.out.print("Commit failed: ");
-                            e.printStackTrace();
-                            System.out.println("Retrying...");
-                            continue;
-                        }
-                        success = true;
+                    try {
+                        g.commit();
+                    } catch (TitanException e) {
+                        System.out.print("Commit failed: ");
+                        e.printStackTrace();
                     }
                 }
             }
         }
 
-        boolean success = false;
-        while (!success) {
-            try {
-                g.commit();
-            } catch (TitanException e) {
-                System.out.print("Commit failed: ");
-                e.printStackTrace();
-                System.out.println("Retrying...");
-                continue;
-            }
-            success = true;
+        try {
+            g.commit();
+        } catch (TitanException e) {
+            System.out.print("Commit failed: ");
+            e.printStackTrace();
         }
         System.out.println("Finished loading nodes from nodeFile " + edgeFile);
         System.out.println("Processed " + c + " edges.");

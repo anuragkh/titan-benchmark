@@ -148,8 +148,6 @@ public class ParallelLoadNodes {
                 // Node file has funky carriage return ^M, so we read one more line to finish the node information
                 line += '\02' + br.readLine(); // replace carriage return with dummy line
                 Vertex node = g.addVertex(TitanId.toVertexId(c));
-
-                // Vertex node = bg.addVertex(TitanId.toVertexId(c));
                 Iterator<String> tokens = Splitter.fixedLength(propertySize + 1).split(line).iterator();
                 for (int i = 0; i < numProperty; i++) {
                     String attr = tokens.next().substring(1); // trim first delimiter character
@@ -159,35 +157,22 @@ public class ParallelLoadNodes {
                     if (c % 100000L == 0L) {
                         System.out.println("Processed " + (c - seed) + " nodes from file " + nodeFile);
                     }
-                    boolean success = false;
-                    while (!success) {
-                        try {
-                            g.commit();
-                        } catch (TitanException e) {
-                            System.out.print("Commit failed: ");
-                            e.printStackTrace();
-                            System.out.println("Retrying...");
-                            continue;
-                        }
-                        success = true;
+                    try {
+                        g.commit();
+                    } catch (TitanException e) {
+                        System.out.print("Commit failed: ");
+                        e.printStackTrace();
                     }
                 }
             }
         }
 
-        boolean success = false;
-        while (!success) {
-            try {
-                g.commit();
-            } catch (TitanException e) {
-                System.out.print("Commit failed: ");
-                e.printStackTrace();
-                System.out.println("Retrying...");
-                continue;
-            }
-            success = true;
+        try {
+            g.commit();
+        } catch (TitanException e) {
+            System.out.print("Commit failed: ");
+            e.printStackTrace();
         }
-        System.out.println("Finished loading nodes from nodeFile " + nodeFile);
         System.out.println("Processed " + (c - seed) + " nodes.");
     }
 }
