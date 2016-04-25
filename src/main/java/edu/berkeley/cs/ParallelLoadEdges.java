@@ -67,7 +67,7 @@ public class ParallelLoadEdges {
         titanConfig.setProperty("storage.batch-loading", true);
         titanConfig.setProperty("storage.buffer-size", 5120);
         titanConfig.setProperty("schema.default", "none");
-        titanConfig.setProperty("ids.block-size", 100000);
+        titanConfig.setProperty("ids.block-size", 10000);
         titanConfig.setProperty("ids.authority.wait-time", 60000);
 
         TitanGraph g = TitanFactory.open(titanConfig);
