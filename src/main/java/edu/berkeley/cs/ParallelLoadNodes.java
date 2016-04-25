@@ -85,11 +85,8 @@ public class ParallelLoadNodes {
         titanConfig.setProperty("schema.default", "none");
         titanConfig.setProperty("graph.set-vertex-id", true);
         titanConfig.setProperty("storage.cassandra.keyspace", config.getString("name"));
-        titanConfig.setProperty("storage.batch-loading", true);
         titanConfig.setProperty("storage.buffer-size", 5120);
-        titanConfig.setProperty("schema.default", "none");
-        titanConfig.setProperty("ids.block-size", 10000);
-        titanConfig.setProperty("ids.authority.wait-time", 60000);
+        titanConfig.setProperty("ids.block-size", 1000000);
 
         TitanGraph g = TitanFactory.open(titanConfig);
         createSchemaIfNotExists(g, config);
