@@ -111,6 +111,7 @@ public class Load {
         bg.commit();
 
         c = 1L;
+        startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new FileReader(edgeFile))) {
             for (String line; (line = br.readLine()) != null; ) {
                 List<String> tokens = Lists.newArrayList(Splitter.on(' ').limit(4).split(line));
@@ -130,7 +131,9 @@ public class Load {
                 edge.setProperty("timestamp", timestamp);
                 edge.setProperty("property", property);
                 if (++c%1000L == 0L) {
-                    System.out.println("Processed " + c + " edges");
+                    long now = System.currentTimeMillis();
+                    System.out.println("Processed " + c + " edges in " + (startTime - now) + "ms ("
+                        + ((double) c / (startTime - now)) + " edges/s)");
                     bg.commit();
                 }
             }
