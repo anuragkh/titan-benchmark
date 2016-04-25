@@ -88,6 +88,7 @@ public class Load {
         System.out.printf("nodeFile %s, edgeFile %s, propertySize %d\n", nodeFile, edgeFile, propertySize);
 
         long c = 1L;
+        long startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new FileReader(nodeFile))) {
             for (String line; (line = br.readLine()) != null; ) {
                 // Node file has funky carriage return ^M, so we read one more line to finish the node information
@@ -99,7 +100,9 @@ public class Load {
                     node.setProperty("attr" + i, attr);
                 }
                 if (++c%1000L == 0L) {
-                    System.out.println("Processed " + c + " nodes");
+                    long now = System.currentTimeMillis();
+                    System.out.println("Processed " + c + " nodes in " + (now - startTime) + "ms ("
+                        + ((double) c / (startTime - now)) + " nodes/s)");
                     bg.commit();
                 }
             }
