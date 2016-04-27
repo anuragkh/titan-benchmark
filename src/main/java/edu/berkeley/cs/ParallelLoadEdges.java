@@ -145,7 +145,7 @@ public class ParallelLoadEdges {
                     if (c % 100000L == 0) {
                         System.out.println("Processed " + c + " edges from file " + edgeFile
                           + " in " + (System.currentTimeMillis() - startTime) + " ms ("
-                          + (c * 1000 / (System.currentTimeMillis() - startTime)) + " edges/s)"
+                          + (c * 1000.0 / (System.currentTimeMillis() - startTime)) + " edges/s)"
                         );
                     }
                     try {

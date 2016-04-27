@@ -100,7 +100,7 @@ public class Load {
                 if (++c%1000L == 0L) {
                     long now = System.currentTimeMillis();
                     System.out.println("Processed " + c + " nodes in " + (now - startTime) + "ms ("
-                        + ((double) c / (startTime - now)) + " nodes/s)");
+                        + (c * 1000.0 / (now - startTime)) + " nodes/s)");
                     bg.commit();
                 }
             }
@@ -130,9 +130,9 @@ public class Load {
                 edge.setProperty("property", property);
                 if (++c%1000L == 0L) {
                     long now = System.currentTimeMillis();
-                    System.out.println("Processed " + c + " edges in " + (startTime - now) + "ms ("
-                        + ((double) c / (startTime - now)) + " edges/s)");
                     bg.commit();
+                    System.out.println("Processed " + c + " edges in " + (now - startTime) + "ms ("
+                      + (c * 1000.0 / (now - startTime)) + " edges/s)");
                 }
             }
         }

@@ -159,7 +159,7 @@ public class ParallelLoadNodes {
                     if (c % 100000L == 0L) {
                         System.out.println("Processed " + (c - seed) + " nodes from file "
                           + nodeFile + " in " + (System.currentTimeMillis() - startTime) + "ms ("
-                          + ((c - seed) * 1000 / (System.currentTimeMillis() - startTime))
+                          + ((c - seed) * 1000.0 / (System.currentTimeMillis() - startTime))
                           + " nodes/s)"
                         );
                     }
