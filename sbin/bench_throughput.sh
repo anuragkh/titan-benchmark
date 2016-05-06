@@ -45,23 +45,23 @@ fi
 numClients=( 64 16 32 64 )
 tests=(
   ## Mix queries
-  #MixPrimitive
+  MixPrimitive
   MixTao
   MixTaoWithUpdates
 
   ## Primitive queries
-  #Neighbor
-  #NeighborNode
-  #EdgeAttr
-  #NeighborAtype
-  #NodeNode
+  Neighbor
+  NeighborNode
+  EdgeAttr
+  NeighborAtype
+  NodeNode
   
   ## TAO queries
-  #AssocRange
-  #ObjGet
+  AssocRange
+  ObjGet
   AssocGet
-  #AssocCount
-  #AssocTimeRange
+  AssocCount
+  AssocTimeRange
 )
 
 bash ${sbin}/sync.sh ${sbin}/../
