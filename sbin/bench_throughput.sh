@@ -40,7 +40,7 @@ else
     exit
 fi
 
-numClients=( 56 56 )
+numClients=( 64 16 32 64 )
 tests=(
   ## Mix queries
   #MixPrimitive
