@@ -65,6 +65,7 @@ tests=(
 )
 
 bash ${sbin}/sync.sh ${sbin}/../
+bash ${sbin}/sync.sh $query_dir
 
 function prepare() {
 bash ${sbin}/hosts.sh bash ${sbin}/prepare.sh ${OUTPUT_DIR} ${query_dir}
