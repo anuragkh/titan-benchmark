@@ -7,7 +7,7 @@ sbin="`dirname "$0"`"
 sbin="`cd "$sbin"; pwd`"
 
 if [ "$dataset" = "" ]; then
-  dataset=twitter
+  dataset=uk
 fi
 
 if [ "$hosts" = "" ]; then
