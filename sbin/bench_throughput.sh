@@ -6,12 +6,26 @@ set -ex
 sbin="`dirname "$0"`"
 sbin="`cd "$sbin"; pwd`"
 
-dataset=twitter
-HOSTLIST=`cat ${sbin}/../conf/hosts`
-query_dir=~/${dataset}Queries
-results=~/${dataset}Results
+if [ "$dataset" = "" ]; then
+  dataset=twitter
+fi
+
+if [ "$hosts" = "" ]; then
+  HOSTLIST=`cat ${sbin}/../conf/hosts`
+fi
+
+if [ "$query_dir" = "" ]; then
+  query_dir=~/${dataset}Queries
+fi
+
+if [ "$results" = "" ]; then
+  results=~/${dataset}Results
+fi
 mkdir -p $results
-OUTPUT_DIR=output
+
+if [ "$OUTPUT_DIR" = "" ]; then
+  OUTPUT_DIR=output
+fi
 
 warmup=$((3*60))
 measure=$((5*60))
