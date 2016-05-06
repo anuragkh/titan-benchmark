@@ -12,6 +12,8 @@ fi
 
 if [ "$hosts" = "" ]; then
   HOSTLIST=`cat ${sbin}/../conf/hosts`
+else
+  HOSTLIST=`cat $hosts`
 fi
 
 if [ "$query_dir" = "" ]; then
