@@ -6,12 +6,28 @@ set -ex
 sbin="`dirname "$0"`"
 sbin="`cd "$sbin"; pwd`"
 
-dataset=twitter
-HOSTLIST=`cat ${sbin}/../conf/hosts`
-query_dir=~/${dataset}Queries
-results=~/${dataset}Results
+if [ "$dataset" = "" ]; then
+  dataset=uk
+fi
+
+if [ "$hosts" = "" ]; then
+  HOSTLIST=`cat ${sbin}/../conf/hosts`
+else
+  HOSTLIST=`cat $hosts`
+fi
+
+if [ "$query_dir" = "" ]; then
+  query_dir=~/${dataset}Queries
+fi
+
+if [ "$results" = "" ]; then
+  results=~/${dataset}Results
+fi
 mkdir -p $results
-OUTPUT_DIR=output
+
+if [ "$OUTPUT_DIR" = "" ]; then
+  OUTPUT_DIR=output
+fi
 
 warmup=$((3*60))
 measure=$((5*60))
@@ -26,29 +42,30 @@ else
     exit
 fi
 
-numClients=( 56 56 )
+numClients=( 64 16 32 64 )
 tests=(
   ## Mix queries
-  #MixPrimitive
+  MixPrimitive
   MixTao
   MixTaoWithUpdates
 
   ## Primitive queries
-  #Neighbor
-  #NeighborNode
-  #EdgeAttr
-  #NeighborAtype
-  #NodeNode
+  Neighbor
+  NeighborNode
+  EdgeAttr
+  NeighborAtype
+  NodeNode
   
   ## TAO queries
-  #AssocRange
-  #ObjGet
+  AssocRange
+  ObjGet
   AssocGet
-  #AssocCount
-  #AssocTimeRange
+  AssocCount
+  AssocTimeRange
 )
 
 bash ${sbin}/sync.sh ${sbin}/../
+bash ${sbin}/sync.sh $query_dir
 
 function prepare() {
 bash ${sbin}/hosts.sh bash ${sbin}/prepare.sh ${OUTPUT_DIR} ${query_dir}

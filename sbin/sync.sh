@@ -40,12 +40,16 @@ DIR=`readlink -f "$1"`
 DIR=`echo "$DIR"|sed 's@/$@@'`
 DEST=`dirname "$DIR"`
 
-HOSTS=`cat $sbin/../conf/hosts`
+if [ "$hosts" = "" ]; then
+  HOSTSLIST=`cat $sbin/../conf/hosts`
+else
+  HOSTSLIST=`cat $hosts`
+fi
 
 SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=5"
 
 echo "RSYNC'ing $DIR to hosts..."
-for host in $HOSTS; do
+for host in $HOSTSLIST; do
     echo $host
     rsync -e "ssh $SSH_OPTS" -az $DELETE_FLAG "$DIR" "$host:$DEST" & sleep 0.5
 done

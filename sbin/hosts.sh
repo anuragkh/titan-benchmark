@@ -10,7 +10,12 @@ if [ $# -le 0 ]; then
 fi
 
 sbin="`dirname "$0"`"
-HOSTLIST=`cat ${sbin}/../conf/hosts`
+
+if [ "$hosts" = "" ]; then
+  HOSTLIST=`cat ${sbin}/../conf/hosts`
+else
+  HOSTLIST=`cat $hosts`
+fi
 
 # By default disable strict host key checking
 if [ "$TITAN_SSH_OPTS" = "" ]; then
