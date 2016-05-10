@@ -143,7 +143,7 @@ public class Graph {
             node.setProperty("attr" + i, attrs.get(i));
         }
 
-        // TODO: Should add commit to make objAdd persistent
+        // TODO: Should we add commit to make objAdd persistent right away?
     }
 
     public List<Assoc> assocRange(long id, int atype, int offset, int length) {
@@ -183,7 +183,7 @@ public class Graph {
         edge.setProperty("timestamp", timestamp);
         edge.setProperty("property", property);
 
-        // TODO: Should add commit to make assocAdd persistent
+        // TODO: Should we add commit to make assocAdd persistent right away?
     }
 
     public long assocCount(long id, int atype) {

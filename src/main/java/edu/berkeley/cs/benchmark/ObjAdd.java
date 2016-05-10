@@ -4,7 +4,7 @@ import edu.berkeley.cs.titan.Graph;
 
 import java.util.Random;
 
-public class ObjAdd extends Benchmark<Integer> {
+public class ObjAdd extends Benchmark<Long> {
     private Random warmupRand;
     private Random rand;
 
@@ -15,16 +15,16 @@ public class ObjAdd extends Benchmark<Integer> {
     }
 
     @Override
-    public Integer warmupQuery(Graph g, int i) {
+    public Long warmupQuery(Graph g, int i) {
         long nodeId = Integer.MAX_VALUE + (long) warmupRand.nextInt(Integer.MAX_VALUE);
         g.objAdd(nodeId, NODE_ATTRS);
-        return 0;
+        return 0L;
     }
 
     @Override
-    public Integer query(Graph g, int i) {
+    public Long query(Graph g, int i) {
         long nodeId = Integer.MAX_VALUE + (long) rand.nextInt(Integer.MAX_VALUE);
         g.objAdd(nodeId, NODE_ATTRS);
-        return 0;
+        return 0L;
     }
 }
